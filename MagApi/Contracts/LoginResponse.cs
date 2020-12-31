@@ -16,7 +16,7 @@ namespace MagApi.Contracts
         [JsonProperty("firstname")]
         public string FirstName { get; set; }
 
-        [JsonProperty("lastnmae")]
+        [JsonProperty("lastname")]
         public string LastName { get; set; }
 
         [JsonProperty("roles")]

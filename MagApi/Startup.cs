@@ -98,7 +98,7 @@ namespace MagApi
                                   });
             });
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
 
         }
 
