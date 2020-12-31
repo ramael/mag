@@ -1,0 +1,27 @@
+﻿<style>
+
+</style>
+<div class="wrapper">
+    <div class="btn-toolbar bg-secondary justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+
+        <div class="btn-group btn-group-toggle" role="group" data-toggle="buttons" data-bind="foreach: pages">
+            <label class="btn btn-secondary" data-bind="css: {active: $parent.selectedPage().id == id}">
+                <span data-bind="text: label"></span>
+                <input type="radio" name="pages" data-bind="value: id, attr: {checked: $parent.selectedPage().id == id}, event: {change: $parent.selectPage}">
+            </label>
+        </div>
+
+        <div class="">
+            <label class="text-white" data-bind="text: root.user().firstname + ' ' + root.user().lastname + ' [' + root.user().roles + ']'"></label>
+            <button type="button" class="btn btn-secondary" data-bind="click: logout">
+                <svg class="bi" width="24" height="24" fill="currentColor">
+                    <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#power" />
+                </svg>
+            </button>
+        </div>
+
+    </div>
+
+    <div data-bind='component: { name: selectedPage().component, params: { value: root } }'></div>
+
+</div>

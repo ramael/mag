@@ -3,8 +3,16 @@
 <head>
     <meta charset="utf-8" />
     <title>Mag</title>
+    <script type="text/javascript" data-main="js/mag.js" src="libs/requirejs/require.min.js"></script>
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/mag.css" />
 </head>
 <body>
-    <h1>Welcome to Mag</h1>
+    <div data-bind="ifnot: user() && user().token">
+        <m-login params="value: $root"></m-login>
+    </div>
+    <div data-bind="if: user() && user().token">
+        <m-home params="value: $root"></m-home>
+    </div>
 </body>
 </html>

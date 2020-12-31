@@ -1,0 +1,69 @@
+﻿<style>
+    .wrapper {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        min-height: 100%;
+        padding: 20px;
+    }
+
+    .m-login-container {
+        -webkit-border-radius: 10px 10px 10px 10px;
+        border-radius: 10px 10px 10px 10px;
+        background: #fff;
+        padding: 30px;
+        width: 90%;
+        max-width: 450px;
+        position: relative;
+        padding: 10px;
+        -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+        box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+        text-align: center;
+    }
+
+    .m-login-header {
+        border-bottom: 1px solid #dce8f1;
+        padding: 10px;
+        margin-bottom: 10px;
+        text-align: center;
+        -webkit-border-radius: 10px 10px 0 0;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .m-login-footer {
+        border-top: 1px solid #dce8f1;
+        padding: 10px;
+        margin-top: 10px;
+        text-align: center;
+        -webkit-border-radius: 0 0 10px 10px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .error {
+        color: red;
+    }
+
+</style>
+<div class="wrapper">
+    <div class="m-login-container">
+        <div class="m-login-header">
+            <h1>Welcome</h1>
+        </div>
+
+        <div class="form-group">
+            <label for="login">Login</label>
+            <input type="text" id="login" class="form-control" name="login" data-bind="value: username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" name="login" data-bind="value: password">
+        </div>
+        <input type="submit" class="btn btn-primary" value="Log In" data-bind="click: login" />
+
+        <div class="m-login-footer" data-bind="visible: error">
+            <span class="error" data-bind=" text: errorMessage"></span>
+        </div>
+    </div>
+</div>
