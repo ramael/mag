@@ -1,6 +1,38 @@
 ﻿<style>
-
+    .wrapper.currentstock {
+        padding: 20px;
+    }
 </style>
-<div class="wrapper">
-    <h1>CURRENT STOCK</h1>
+<div class="wrapper currentstock">
+    <div class="form-group">
+        <label for="warehouses">Warehouses</label>
+        <select class="form-control" id="warehouses" data-bind="options: warehouses,
+                                                               optionsValue: 'id',
+                                                               optionsText: function(item) { return item.name + ' - ' + item.description },
+                                                               optionsCaption: 'Choose a warehouse...',
+                                                               value: selectedWarehouse "></select>
+    </div>
+    <div class="current stock table-responsive" data-bind="foreach: warehouseCurrentStock">
+        <table class="table">
+            <colgroup>
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 30%;">
+                <col span="1" style="width: 60%;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th data-bind="text: 'Qty ' + componentqty"></th>
+                    <th data-bind="text: componentcode"></th>
+                    <th data-bind="text: componentdescription"></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: details">
+                <tr>
+                    <td></td>
+                    <td data-bind="text: serialnumber"></td>
+                    <td data-bind="text: '[' + areaname + '] - [' + locationname +']'"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
