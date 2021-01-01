@@ -4,7 +4,7 @@
 <div class="wrapper">
     <div class="btn-toolbar bg-secondary justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
 
-        <div class="btn-group btn-group-toggle" role="group" data-toggle="buttons" data-bind="foreach: pages">
+        <div class="btn-group btn-group-toggle" role="group" data-toggle="buttons" data-bind="foreach: root.pages">
             <label class="btn btn-secondary" data-bind="css: {active: $parent.selectedPage().id == id}">
                 <span data-bind="text: label"></span>
                 <input type="radio" name="pages" data-bind="value: id, attr: {checked: $parent.selectedPage().id == id}, event: {change: $parent.selectPage}">

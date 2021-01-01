@@ -1,20 +1,9 @@
-﻿define(['knockout', 'text!./m-home.html'], function (ko, tplString) {
-
-    function Page(id, label, component) {
-        this.id = id;
-        this.label = label;
-        this.component = component;
-    }
+﻿define(['knockout', 'sammy', 'text!./m-home.html'], function (ko, sammy, tplString) {
 
     function HomeModel(params) {
         const self = this;
         self.root = params.value;
         self.selectedPage = ko.observable();
-        self.pages = [
-            new Page("components", "Components", "m-components"),
-            new Page("loadedcarts", "Loaded Carts", "m-loadedcarts"),
-            new Page("currentstock", "Current Stock", "m-currentstock")
-        ];
 
         // Events
         self.logout = function () {
@@ -22,11 +11,24 @@
         };
 
         self.selectPage = function (page) {
-            self.selectedPage(page);
+            location.hash = page.id;
         };
 
-        // Init
-        self.selectPage(self.pages[2]);
+        // Client side routes
+        sammy(function () {
+            this.get('#:page', function () {
+                const pageid = this.params['page'];
+                const page = self.root.pages.find(function (p) { return p.id === pageid });
+                self.selectedPage(page);
+            });
+
+            // Default route
+            this.get('', function () {
+                this.app.runRoute('get', '#currentstock');
+            });
+
+        }).run();
+
     }
 
     return { viewModel: HomeModel, template: tplString };

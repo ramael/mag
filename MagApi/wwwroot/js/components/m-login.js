@@ -7,6 +7,8 @@
         self.errorMessage = ko.observable("");
         self.username = "";
         self.password = "";
+
+        // Events
         self.login = function () {
             const lr = new self.root.contracts.loginrequest(this.username, this.password);
             $.ajax({

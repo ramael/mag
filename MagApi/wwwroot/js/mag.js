@@ -9,21 +9,22 @@
     }
 });
 
-require(['text', 'jquery', 'knockout', 'bootstrap', 'sammy', 'js/contracts/apis', 'js/contracts/contracts'], function (text, $, ko, bs, sm, apis, contracts) {
+require(['text', 'jquery', 'knockout', 'bootstrap', 'js/contracts/apis', 'js/contracts/contracts', 'js/contracts/pages'], function (text, $, ko, bs, apis, contracts, pages) {
 
     function MagModel() {
         this.apis = apis;
         this.contracts = contracts;
+        this.pages = pages;
         this.user = ko.observable();
     }
 
     $(document).ready(function () {
         ko.components.register('m-login', { require: 'js/components/m-login' });
         ko.components.register('m-home', { require: 'js/components/m-home' });
-        ko.components.register('m-components', { require: 'js/components/m-components' });
-        ko.components.register('m-loadedcarts', { require: 'js/components/m-loadedcarts' });
-        ko.components.register('m-currentstock', { require: 'js/components/m-currentstock' });
-        
+        for (let i = 0; i < pages.length; i++) {
+            ko.components.register(pages[i].component, { require: 'js/components/' + pages[i].component });
+        };
+
         ko.applyBindings(new MagModel());
     });
 });
