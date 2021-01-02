@@ -30,6 +30,7 @@
             }).fail(function (data) {
                 console.log("warehouses error", data);
                 self.warehouses.removeAll();
+                self.root.handleServerError(data);
             });
         };
 
@@ -59,6 +60,7 @@
             }).fail(function (data) {
                 console.log("warehouse current stocl error", data);
                 self.warehouseCurrentStock.removeAll();
+                self.root.handleServerError(data);
             });
         };
 

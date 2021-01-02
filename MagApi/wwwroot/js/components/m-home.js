@@ -24,7 +24,7 @@
 
             // Default route
             this.get('', function () {
-                this.app.runRoute('get', '#currentstock');
+                this.app.runRoute('get', '#components');
             });
 
         }).run();

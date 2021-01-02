@@ -1,0 +1,24 @@
+﻿<style>
+</style>
+<div class="wrapper component">
+    <form action="#" data-bind="submit: doSubmit">
+        <div class="component-body">
+            <div class="form-group">
+                <label for="code">Code</label>
+                <input type="text" class="form-control" id="code" data-bind="value: component().code, attr: {disabled: isEdit()}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" class="form-control" id="description" data-bind="value: component().description" required>
+            </div>
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea type="text" class="form-control" id="notes" rows="3" data-bind="value: component().notes"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" >Ok</button>
+            <button type="button" class="btn btn-secondary" data-bind="click: doCancel">Cancel</button>
+        </div>
+    </form>
+</div>

@@ -98,6 +98,25 @@
         this.locationname = locationname;
     }
 
+    function ModalMessage(title, message) {
+        this.title = title;
+        this.message = message;
+    }
+
+    function ModalConfirm(title, message, data, callback) {
+        this.title = title;
+        this.message = message;
+        this.data = data;
+        this.callback = callback;
+    }
+
+    function ModalComponent(title, component, data, callback) {
+        this.title = title;
+        this.component = component;
+        this.data = data;
+        this.callback = callback;
+    }
+
     return {
         warehouse: Warehouse,
         area: Area,
@@ -109,6 +128,9 @@
         loginrequest: LoginRequest,
         loginresponse: LoginResponse,
         stock: Stock,
-        stockdetail: StockDetail
+        stockdetail: StockDetail,
+        modalMessage: ModalMessage,
+        modalConfirm: ModalConfirm,
+        modalComponent: ModalComponent
     }
 });

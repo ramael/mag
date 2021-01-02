@@ -1,6 +1,54 @@
 ﻿<style>
-
+    .wrapper.components {
+        padding: 20px;
+    }
 </style>
-<div class="wrapper">
-    <h1>COMPONENTS</h1>
+<div class="wrapper components">
+    <button type="button" class="btn btn-primary btn-block" data-bind="click: addComponent">
+        <svg class="bi" width="24" height="24" fill="currentColor">
+            <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#plus" />
+        </svg>
+        Add component
+    </button>
+    <div class="components table-responsive">
+        <table class="table">
+            <colgroup>
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 30%;">
+                <col span="1" style="width: 50%;">
+                <col span="1">
+                <col span="1">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Notes</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: components">
+                <tr>
+                    <td data-bind="text: code"></td>
+                    <td data-bind="text: description"></td>
+                    <td data-bind="text: notes"></td>
+                    <td>
+                        <div data-bind="click: $parent.editComponent">
+                            <svg class="bi" width="24" height="24" fill="currentColor">
+                                <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#pencil" />
+                            </svg>
+                        </div>
+                    </td>
+                    <td>
+                        <div data-bind="click: $parent.removeComponent">
+                            <svg class="bi" width="24" height="24" fill="currentColor">
+                                <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#trash" />
+                            </svg>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
