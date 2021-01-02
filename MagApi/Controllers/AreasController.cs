@@ -37,6 +37,7 @@ namespace MagApi.Models
                                     Description = a.Description,
                                     Notes = a.Notes
                                 })
+                                .OrderBy(a => a.Name)
                                 .ToListAsync();
         }
 

@@ -36,6 +36,7 @@ namespace MagApi.Controllers
                                     SerialNumber = c.SerialNumber,
                                     Status = (Cart.StatusEnum) (int) c.Status
                                 })
+                                .OrderBy(c => c.SerialNumber)
                                 .ToListAsync();
         }
 

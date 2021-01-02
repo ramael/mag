@@ -37,6 +37,7 @@ namespace MagApi.Controllers
                                     Description = c.Description,
                                     Notes = c.Notes
                                 })
+                                .OrderBy(c => c.Code)
                                 .ToListAsync();
         }
 

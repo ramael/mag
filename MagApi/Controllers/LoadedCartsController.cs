@@ -56,6 +56,7 @@ namespace MagApi.Controllers
                                         }                             
                                     }
                                 )
+                                .OrderBy(lc => lc.Year).ThenBy(lc => lc.Progressive)
                                 .ToListAsync();
         }
 
