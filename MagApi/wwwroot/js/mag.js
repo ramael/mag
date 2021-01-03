@@ -18,7 +18,7 @@ require(['text', 'jquery', 'knockout', 'bootstrap', 'js/contracts/apis', 'js/con
         self.pages = pages;
         self.user = ko.observable();
         //debug
-        self.user(new contracts.loginresponse("t1", "Test1", "T1LN", ["WarehouseManager"], "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InQxIiwicm9sZSI6IldhcmVob3VzZU1hbmFnZXIiLCJuYmYiOjE2MDk2MDUwOTIsImV4cCI6MTYwOTYwNjg5MiwiaWF0IjoxNjA5NjA1MDkyLCJpc3MiOiJodHRwOi8vbWFnLm9yZyIsImF1ZCI6Imh0dHA6Ly9tYWcub3JnIn0.OfOD_assyrmGT_kYINEJ03fsKsNcB_IgN-McQPr4Zd8"));
+        self.user(new contracts.loginresponse("t1", "Test1", "T1LN", ["WarehouseManager"], "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InQxIiwicm9sZSI6IldhcmVob3VzZU1hbmFnZXIiLCJuYmYiOjE2MDk2OTUyMjgsImV4cCI6MTYwOTY5NzAyOCwiaWF0IjoxNjA5Njk1MjI4LCJpc3MiOiJodHRwOi8vbWFnLm9yZyIsImF1ZCI6Imh0dHA6Ly9tYWcub3JnIn0.V-TDtI-CIXs6E95vdsfuMD3leiVjnher-MgSVNvI2t0"));
 
         self.modalMessage = ko.observable();
         self.modalConfirm = ko.observable();

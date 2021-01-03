@@ -1,6 +1,74 @@
 ﻿<style>
-
+    .wrapper.loadedcarts {
+        padding: 20px;
+    }
 </style>
-<div class="wrapper">
-    <h1>LOADED CARTS</h1>
+<div class="wrapper loadedcarts">
+    <div class="form-group">
+        <label for="warehouses">Warehouses</label>
+        <select class="form-control" id="warehouses" data-bind="options: warehouses,
+                                                               optionsValue: 'id',
+                                                               optionsText: function(item) { return item.name + ' - ' + item.description },
+                                                               optionsCaption: 'Choose a warehouse...',
+                                                               value: selectedWarehouse "></select>
+    </div>
+    <button type="button" class="btn btn-primary btn-block" data-bind="click: addLoadedCart, attr: {disabled: !selectedWarehouse()}">
+        <svg class="bi" width="24" height="24" fill="currentColor">
+            <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#plus" />
+        </svg>
+        Add loaded cart
+    </button>
+    <div class="loadedcarts table-responsive">
+        <table class="table">
+            <colgroup>
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 15%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 15%;">
+                <col span="1" style="width: 15%;">
+                <col span="1" style="width: 15%;">
+                <col span="1" style="width: 10%;">
+                <col span="1">
+                <col span="1">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Progressive</th>
+                    <th>Description</th>
+                    <th>Area Name</th>
+                    <th>Location Name</th>
+                    <th>Cart SerialNumber</th>
+                    <th>Date In</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: warehouseLoadedCarts">
+                <tr>
+                    <td data-bind="text: year"></td>
+                    <td data-bind="text: progressive"></td>
+                    <td data-bind="text: description"></td>
+                    <td data-bind="text: location.area.name"></td>
+                    <td data-bind="text: location.name"></td>
+                    <td data-bind="text: cart.serialnumber"></td>
+                    <td data-bind="text: datein"></td>
+                    <td>
+                        <div data-bind="click: $parent.editLoadedCart">
+                            <svg class="bi" width="24" height="24" fill="currentColor">
+                                <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#pencil" />
+                            </svg>
+                        </div>
+                    </td>
+                    <td>
+                        <div data-bind="click: $parent.removeLoadedCart">
+                            <svg class="bi" width="24" height="24" fill="currentColor">
+                                <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#trash" />
+                            </svg>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

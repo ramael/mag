@@ -7,19 +7,21 @@
         this.areas = areas;
     }
 
-    function Area(id, name, description, notes, locations) {
+    function Area(id, name, description, notes, warehouse, locations) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.notes = notes;
+        this.warehouse = warehouse;
         this.locations = locations;
     }
 
-    function Location(id, name, description, notes) {
+    function Location(id, name, description, notes, area) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.notes = notes;
+        this.area = area;
     }
 
     function Cart(id, serialnumber, status) {

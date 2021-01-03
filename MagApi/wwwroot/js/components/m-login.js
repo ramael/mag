@@ -11,22 +11,16 @@
         // Events
         self.login = function () {
             const lr = new self.root.contracts.loginrequest(this.username, this.password);
-            $.ajax({
-                url: self.root.apis.login,
-                dataType: 'json',
-                type: 'post',
-                contentType: 'application/json',
-                data: JSON.stringify(lr),
-                processData: false
-            }).done(function (data) {
-                const user = new self.root.contracts.loginresponse(data.username, data.firstname, data.lastname, data.roles, data.token);
-                self.root.user(user)
-                self.error(false);
-                self.errorMessage("");
-            }).fail(function (data) {
-                self.error(true);
-                self.errorMessage(data.status + " - " + data.responseText);
-            });
+            self.root.apis.login(lr)
+                .done(function (data) {
+                    const user = new self.root.contracts.loginresponse(data.username, data.firstname, data.lastname, data.roles, data.token);
+                    self.root.user(user)
+                    self.error(false);
+                    self.errorMessage("");
+                }).fail(function (data) {
+                    self.error(true);
+                    self.errorMessage(data.status + " - " + data.responseText);
+                });
         };
     }
 

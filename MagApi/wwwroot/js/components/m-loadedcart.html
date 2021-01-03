@@ -1,0 +1,114 @@
+﻿<style>
+    .wrapper.loadedcart {
+        padding: 20px;
+    }
+</style>
+<div class="wrapper loadedcart">
+    <form action="#" data-bind="submit: doSubmit">
+        <div class="loadedcart-body">
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label for="warehouses">Warehouses</label>
+                    <select class="form-control" id="warehouses" data-bind="options: warehouses,
+                                                                        optionsValue: 'id',
+                                                                        optionsText: function(item) { return item.name + ' - ' + item.description },
+                                                                        optionsCaption: 'Choose a warehouse...',
+                                                                        value: selectedWarehouse" required disabled></select>
+                </div>
+                <div class="form-group col-6">
+                    <label for="areas">Areas</label>
+                    <select class="form-control" id="areas" data-bind="options: areas,
+                                                                   optionsValue: 'id',
+                                                                   optionsText: function(item) { return item.name + ' - ' + item.description },
+                                                                   optionsCaption: 'Choose an area...',
+                                                                   value: selectedArea,
+                                                                   attr: {disabled: !selectedWarehouse()}" required></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <label for="locations">Locations</label>
+                    <select class="form-control" id="locations" data-bind="options: locations,
+                                                                       optionsValue: 'id',
+                                                                       optionsText: function(item) { return item.name + ' - ' + item.description },
+                                                                       optionsCaption: 'Choose a location...',
+                                                                       value: selectedLocation,
+                                                                       attr: {disabled: !selectedArea()}" required></select>
+                </div>
+                <div class="form-group col-6">
+                    <label for="carts">Carts</label>
+                    <select class="form-control" id="carts" data-bind="options: carts,
+                                                                    optionsValue: 'id',
+                                                                    optionsText: 'serialnumber',
+                                                                    optionsCaption: 'Choose a cart...',
+                                                                    value: selectedCart" required></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-3">
+                    <label for="year">Year</label>
+                    <input type="number" class="form-control" id="year" data-bind="value: loadedCart().year, attr: {disabled: isEdit()}" required>
+                </div>
+                <div class="form-group col-6">
+                    <label for="progressive">Progressive</label>
+                    <input type="text" class="form-control" id="progressive" data-bind="value: loadedCart().progressive, attr: {disabled: isEdit()}" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" rows="3" data-bind="value: loadedCart().description"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary btn-block" data-bind="click: addComponent">
+                <svg class="bi" width="24" height="24" fill="currentColor">
+                    <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#plus" />
+                </svg>
+                Add component
+            </button>
+            <div class="loadedcart table-responsive">
+                <table class="table">
+                    <colgroup>
+                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 30%;">
+                        <col span="1" style="width: 50%;">
+                        <col span="1">
+                        <col span="1">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Notes</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: loadedCart().details">
+                        <tr>
+                            <td data-bind="text: component.code"></td>
+                            <td data-bind="text: component.description"></td>
+                            <td data-bind="text: notes"></td>
+                            <td>
+                                <div data-bind="click: $parent.editComponent">
+                                    <svg class="bi" width="24" height="24" fill="currentColor">
+                                        <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#pencil" />
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>
+                                <div data-bind="click: $parent.removeComponent">
+                                    <svg class="bi" width="24" height="24" fill="currentColor">
+                                        <use xlink:href="../libs/bootstrap/icons/bootstrap-icons.svg#trash" />
+                                    </svg>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Ok</button>
+            <button type="button" class="btn btn-secondary" data-bind="click: doCancel">Cancel</button>
+        </div>
+</form>
+</div>
