@@ -28,16 +28,34 @@ namespace MagApi.Controllers
         // GET: api/Carts
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Cart>>> GetCarts()
+        public async Task<ActionResult<IEnumerable<Cart>>> GetCarts([FromQuery(Name = "status")] Cart.StatusEnum? status)
         {
-            return await _context.Carts
-                                .Select(c => new Cart() { 
-                                    Id = c.Id,
-                                    SerialNumber = c.SerialNumber,
-                                    Status = (Cart.StatusEnum) (int) c.Status
-                                })
-                                .OrderBy(c => c.SerialNumber)
-                                .ToListAsync();
+            IEnumerable<Cart> carts = null;
+            if (status.HasValue)
+            {
+                int iStatus = (int)status.Value;
+                carts = await _context.Carts.Where(c => (int)c.Status == iStatus)
+                                            .Select(c => new Cart()
+                                                {
+                                                    Id = c.Id,
+                                                    SerialNumber = c.SerialNumber,
+                                                    Status = (Cart.StatusEnum)(int)c.Status
+                                                })
+                                            .OrderBy(c => c.SerialNumber)
+                                            .ToListAsync();
+            }
+            else
+            {
+                carts = await _context.Carts.Select(c => new Cart()
+                                                {
+                                                    Id = c.Id,
+                                                    SerialNumber = c.SerialNumber,
+                                                    Status = (Cart.StatusEnum)(int)c.Status
+                                                })
+                                            .OrderBy(c => c.SerialNumber)
+                                            .ToListAsync();
+            }
+            return Ok(carts);
         }
 
         // GET: api/Carts/5

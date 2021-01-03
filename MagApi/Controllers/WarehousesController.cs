@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -46,18 +46,12 @@ namespace MagApi.Controllers
         [Authorize]
         public async Task<ActionResult<Warehouse>> GetWarehouse(long id, [FromQuery(Name = "includeareas")] bool includeAreas)
         {
-            var partialQuery = _context.Warehouses;
+            WarehouseModel warehouse = null;
             if (includeAreas)
-            {
-                partialQuery.Include(w => w.Areas);
-            }
-
-            var warehouse = await partialQuery.Where(a => a.Id == id).FirstOrDefaultAsync();
-            if (warehouse == null)
-            {
-                return NotFound();
-            }
-
+                 warehouse = await _context.Warehouses.Include("Areas").Where(w => w.Id == id).FirstOrDefaultAsync();
+            else
+                warehouse = await _context.Warehouses.Where(w => w.Id == id).FirstOrDefaultAsync();
+            
             var dto = new Warehouse()
             {
                 Id = warehouse.Id,
@@ -69,13 +63,13 @@ namespace MagApi.Controllers
             if (includeAreas)
             {
                 dto.Areas = warehouse.Areas.Select(a => new Area()
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    Description = a.Description,
-                    Notes = a.Notes
-                })
-                 .ToList();
+                                                {
+                                                    Id = a.Id,
+                                                    Name = a.Name,
+                                                    Description = a.Description,
+                                                    Notes = a.Notes
+                                                })
+                                             .ToList();
             }
             return dto;
         }
@@ -134,7 +128,7 @@ namespace MagApi.Controllers
 
         //    return Ok(response);
         //}
-        public async Task<ActionResult<Warehouse>> GetWarehouseCurrentStock2(long id)
+        public async Task<ActionResult<IEnumerable<Stock>>> GetWarehouseCurrentStock(long id)
         {
             var details = _context.LoadedCartDetails.Include("LoadedCart")
                                                     .Include("LoadedCart.Cart")
@@ -197,6 +191,70 @@ namespace MagApi.Controllers
                                 .ToList();
 
             return Ok(response);
+        }
+
+        // GET: api/Warehouses/5/CurrentStock
+        [HttpGet("{id}/loadedcarts")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<LoadedCart>>> GetWarehouseLoadedCarts(long id)
+        {
+            var lcList = await _context.LoadedCarts.Include("Cart")
+                                                    .Include("Location")
+                                                    .Include("Location.Area")
+                                                    .Where(lc => lc.Location.Area.WarehouseId == id && !lc.DateOut.HasValue)
+                                                    .OrderBy(lc => lc.Year)
+                                                    .ThenBy(lc => lc.Progressive)
+                                                    .Select(lc => new LoadedCart() {
+                                                        Id = lc.Id,
+                                                        Year = lc.Year,
+                                                        Progressive = lc.Progressive,
+                                                        Description = lc.Description,
+                                                        CartId = lc.CartId,
+                                                        Cart = new Cart() { 
+                                                            Id = lc.Cart.Id,
+                                                            SerialNumber = lc.Cart.SerialNumber,
+                                                            Status = (Cart.StatusEnum)(int)lc.Cart.Status
+                                                        },
+                                                        LocationId = lc.LocationId,
+                                                        Location = new Location() { 
+                                                            Id = lc.Location.Id,
+                                                            Name = lc.Location.Name,
+                                                            Description = lc.Location.Description,
+                                                            AreaId = lc.Location.AreaId,
+                                                            Area = new Area() { 
+                                                                Id = lc.Location.Area.Id,
+                                                                Name = lc.Location.Area.Name,
+                                                                Description = lc.Location.Area.Description
+                                                            }
+                                                        },
+                                                        DateIn = lc.DateIn
+                                                    })
+                                                    .ToListAsync();
+
+            return Ok(lcList);
+        }
+
+        // GET: api/Warehouses/{id}/Areas
+        [HttpGet("{id}/areas")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Area>>> GetWarehouseAreas(long id)
+        {
+            var exists = await _context.Warehouses.Where(w => w.Id == id).AnyAsync();
+            if (!exists)
+            {
+                return NotFound("Warehouse not found");
+            }
+
+            var areas = await _context.Areas.Where(a => a.WarehouseId == id)
+                                            .Select(a => new Area() { 
+                                                Id = a.Id,
+                                                Name = a.Name,
+                                                Description = a.Description,
+                                                Notes = a.Notes
+                                            })
+                                            .OrderBy(a => a.Name)
+                                            .ToListAsync();
+            return Ok(areas);
         }
 
         // PUT: api/Warehouses/5

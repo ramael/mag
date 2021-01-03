@@ -79,6 +79,30 @@ namespace MagApi.Models
             return dto;
         }
 
+        // GET: api/Areas/{id}/Locations
+        [HttpGet("{id}/locations")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Location>>> GetAreaLocations(long id)
+        {
+            var exists = await _context.Areas.Where(a => a.Id == id).AnyAsync();
+            if (!exists)
+            {
+                return NotFound("Area not found");
+            }
+
+            var locations = await _context.Locations.Where(l => l.AreaId == id)
+                                                    .Select(l => new Area()
+                                                    {
+                                                        Id = l.Id,
+                                                        Name = l.Name,
+                                                        Description = l.Description,
+                                                        Notes = l.Notes
+                                                    })
+                                                    .OrderBy(l => l.Name)
+                                                    .ToListAsync();
+            return Ok(locations);
+        }
+
         // PUT: api/Areas/5
         [HttpPut("{id}")]
         [Authorize(Roles = "WarehouseManager")]
