@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,7 +99,15 @@ namespace MagApi
                                   });
             });
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers()
+                    .AddNewtonsoftJson(options => 
+                    {
+                        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                        options.SerializerSettings.Converters.Add(new IsoDateTimeConverter()
+                        {
+                            DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"
+                        });
+                    });
 
         }
 

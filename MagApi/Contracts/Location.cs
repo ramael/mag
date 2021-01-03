@@ -21,5 +21,11 @@ namespace MagApi.Contracts
 
         [JsonProperty("notes")]
         public string Notes { get; set; }
+
+        [JsonProperty("areaid")]
+        public long AreaId { get; set; }
+
+        [JsonProperty("area")]
+        public Area Area { get; set; }
     }
 }
