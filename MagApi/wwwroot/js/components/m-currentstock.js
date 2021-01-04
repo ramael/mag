@@ -16,11 +16,11 @@
 
         // Events
         self.getWarehouses = function () {
-            self.apis.getWarehouses(self.root.user().token)
-                .done(function (data) {
-                    if (data && data.length > 0) {
-                        data.forEach(function (w) {
-                            self.warehouses.push(new self.root.contracts.warehouse(w.id, w.name, w.description, w.notes));
+            self.root.apis.getWarehouses(self.root.user().token)
+                .done(function (wlist) {
+                    if (wlist && wlist.length > 0) {
+                        wlist.forEach(function (w) {
+                            self.warehouses.push(w);
                         });
                     }
                 }).fail(function (data) {
@@ -31,17 +31,11 @@
         };
 
         self.getWarehouseCurrentStock = function (warehouseid) {
-            self.apis.getWarehouseCurrentStock(self.root.user().token, warehouseid)
-                .done(function (data) {
-                    if (data && data.length > 0) {
-                        data.forEach(function (cs) {
-                            const mcs = new self.root.contracts.stock(cs.componentcode, cs.componentdescription, cs.componentqty, null);
-                            if (cs && cs.details.length > 0) {
-                                mcs.details = cs.details.map(function (csd) {
-                                    return new self.root.contracts.stockdetail(csd.serialnumber, csd.areaname, csd.locationname);
-                                });
-                            }
-                            self.warehouseCurrentStock.push(mcs);
+            self.root.apis.getWarehouseCurrentStock(self.root.user().token, warehouseid)
+                .done(function (cslist) {
+                    if (cslist && cslist.length > 0) {
+                        cslist.forEach(function (cs) {
+                            self.warehouseCurrentStock.push(cs);
                         });
                     }
                 }).fail(function (data) {

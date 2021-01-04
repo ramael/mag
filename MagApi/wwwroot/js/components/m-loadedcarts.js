@@ -3,7 +3,7 @@
     function LoadedCartsModel(params) {
         const self = this;
         self.root = params.value;
-        self.itemid = params.itemid;
+        self.itemid = params.itemid * 1;
         self.warehouses = ko.observableArray();
         self.warehouseLoadedCarts= ko.observableArray();
 
@@ -25,8 +25,8 @@
 
         self.editLoadedCart= function (d) {
             console.log("editLoadedCart", d);
-            if (self.selectedWarehouse() && self.selectedWarehouse().id && d.id) {
-                location.hash = "loadedcart/" + self.selectedWarehouse().id + "/" + d.id;
+            if (self.selectedWarehouse() && d.id) {
+                location.hash = "loadedcart/" + self.selectedWarehouse() + "/" + d.id;
             }
         };
         
@@ -36,17 +36,19 @@
         self.removeLoadedCartConfirm = function (d) {
             console.log("removeLoadedCartConfirm", d);
             self.deleteLoadedCart(d);
-            location.hash = "loadedcarts";
         }
 
         // Ajax
         self.getWarehouses = function () {
             self.root.apis.getWarehouses(self.root.user().token)
-                .done(function (data) {
-                    if (data && data.length > 0) {
-                        data.forEach(function (w) {
-                            self.warehouses.push(new self.root.contracts.warehouse(w.id, w.name, w.description, w.notes));
+                .done(function (wlist) {
+                    if (wlist && wlist.length > 0) {
+                        wlist.forEach(function (w) {
+                            self.warehouses.push(w);
                         });
+                        if (self.itemid && self.itemid !== -1) {
+                            self.selectedWarehouse(self.itemid);
+                        }
                     }
                 }).fail(function (data) {
                     console.log("warehouses error", data);
@@ -57,14 +59,10 @@
 
         self.getWarehouseLoadedCarts = function (warehouseid) {
             self.root.apis.getWarehouseLoadedCarts(self.root.user().token, warehouseid)
-                .done(function (data) {
-                    if (data && data.length > 0) {
-                        data.forEach(function (lc) {
-                            const mc = new self.root.contracts.cart(lc.cart.id, lc.cart.serialnumber, lc.cart.status);
-                            const ma = new self.root.contracts.area(lc.location.area.id, lc.location.area.name, lc.location.area.description, null, null, null);
-                            const ml = new self.root.contracts.location(lc.location.id, lc.location.name, lc.location.description, null, ma);
-                            const mlc = new self.root.contracts.loadedcart(lc.id, lc.year, lc.progressive, lc.locationid, ml, lc.cartid, mc, lc.description, lc.datein, null, null);
-                            self.warehouseLoadedCarts.push(mlc);
+                .done(function (lclist) {
+                    if (lclist && lclist.length > 0) {
+                        lclist.forEach(function (lc) {
+                            self.warehouseLoadedCarts.push(lc);
                         });
                     }
                 }).fail(function (data) {
@@ -78,7 +76,7 @@
             self.root.apis.deleteLoadedCart(self.root.user().token, id)
                 .done(function (data) {
                     self.warehouseLoadedCarts.removeAll();
-                    self.getWarehouseLoadedCarts(self.selectedWarehouse().id);
+                    self.getWarehouseLoadedCarts(self.selectedWarehouse());
                 }).fail(function (data) {
                     console.error("delete loaded cart error", data);
                     self.warehouseLoadedCarts.removeAll();

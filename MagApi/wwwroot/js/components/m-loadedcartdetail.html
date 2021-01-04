@@ -1,0 +1,23 @@
+﻿<style>
+</style>
+<div class="wrapper loadedcartdetail">
+    <div class="loadedcart-body">
+        <div class="form-group">
+            <label for="components">Components</label>
+            <select class="form-control" id="components" data-bind="options: components,
+                                                                        optionsValue: 'id',
+                                                                        optionsText: function(item) { return item.code + ' - ' + item.description },
+                                                                        optionsCaption: 'Choose a component...',
+                                                                        value: selectedComponent,
+                                                                        attr: {disabled: isEdit() }" required></select>
+        </div>
+        <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea class="form-control" id="notes" data-bind="value: notes"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bind="click: doSubmit">Ok</button>
+        <button type="button" class="btn btn-secondary" data-bind="click: doCancel">Cancel</button>
+    </div>
+</div>

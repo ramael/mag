@@ -28,9 +28,9 @@
         // Ajax
         self.getComponent = function (id) {
             self.root.apis.getComponent(self.root.user().token, id)
-                        .done(function (data) {
-                            if (data) {
-                                self.component(new self.root.contracts.component(data.id, data.code, data.description, data.notes));
+                        .done(function (c) {
+                            if (c) {
+                                self.component(c);
                             }
                         }).fail(function (data) {
                             console.error("component error", data);
@@ -40,8 +40,7 @@
         };
 
         self.createComponent = function () {
-            const c = new self.root.contracts.component(self.component().id, self.component().code, self.component().description, self.component().notes);
-            self.root.apis.createComponent(self.root.user().token, c)
+            self.root.apis.createComponent(self.root.user().token, self.component())
                         .done(function (data) {
                             self.component("");
                             if (self.modal) {
@@ -55,8 +54,7 @@
         };
 
         self.updateComponent = function () {
-            const c = new self.root.contracts.component(self.component().id, self.component().code, self.component().description, self.component().notes);
-            self.root.apis.updateComponent(self.root.user().token, self.component().id, c)
+            self.root.apis.updateComponent(self.root.user().token, self.component().id, self.component())
                         .done(function (data) {
                             self.component("");
                             if (self.modal) {

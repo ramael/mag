@@ -52,15 +52,17 @@
         this.notes = notes;
     }
 
-    function LoadedCart(id, year, progressive, locationid, location, cartid, cart, description, datein, dateout, loadedcartdetails) {
+    function LoadedCart(id, year, progressive, description, areaid, area, locationid, location, cartid, cart, datein, dateout, loadedcartdetails) {
         this.id = id;
         this.year = year;
         this.progressive = progressive;
+        this.description = description;
+        this.areaid = areaid;
+        this.area = area;
         this.locationid = locationid;
         this.location = location;
         this.cartid = cartid;
         this.cart = cart;
-        this.description = description;
         this.datein = datein;
         this.dateout = dateout;
         this.loadedcartdetails = loadedcartdetails;

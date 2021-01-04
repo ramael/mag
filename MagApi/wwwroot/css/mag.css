@@ -1,1 +1,7 @@
-﻿
+﻿#modalMessage {
+    z-index: 1000000;
+}
+
+#modalConfirm {
+    z-index: 10000;
+}

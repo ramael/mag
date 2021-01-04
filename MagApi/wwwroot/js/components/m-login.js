@@ -12,8 +12,7 @@
         self.login = function () {
             const lr = new self.root.contracts.loginrequest(this.username, this.password);
             self.root.apis.login(lr)
-                .done(function (data) {
-                    const user = new self.root.contracts.loginresponse(data.username, data.firstname, data.lastname, data.roles, data.token);
+                .done(function (user) {
                     self.root.user(user)
                     self.error(false);
                     self.errorMessage("");

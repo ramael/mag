@@ -18,7 +18,7 @@ require(['text', 'jquery', 'knockout', 'bootstrap', 'js/contracts/apis', 'js/con
         self.pages = pages;
         self.user = ko.observable();
         //debug
-        self.user(new contracts.loginresponse("t1", "Test1", "T1LN", ["WarehouseManager"], "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InQxIiwicm9sZSI6IldhcmVob3VzZU1hbmFnZXIiLCJuYmYiOjE2MDk2OTUyMjgsImV4cCI6MTYwOTY5NzAyOCwiaWF0IjoxNjA5Njk1MjI4LCJpc3MiOiJodHRwOi8vbWFnLm9yZyIsImF1ZCI6Imh0dHA6Ly9tYWcub3JnIn0.V-TDtI-CIXs6E95vdsfuMD3leiVjnher-MgSVNvI2t0"));
+        self.user(new contracts.loginresponse("t1", "Test1", "T1LN", ["WarehouseManager"], "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InQyIiwicm9sZSI6IkNhcnRNYW5hZ2VyIiwibmJmIjoxNjA5NzgzMDgwLCJleHAiOjE2MDk3ODQ4ODAsImlhdCI6MTYwOTc4MzA4MCwiaXNzIjoiaHR0cDovL21hZy5vcmciLCJhdWQiOiJodHRwOi8vbWFnLm9yZyJ9.Tl_giNSDeFi5CDGnDZx8eake9db_X9R1-g9pfXluEv4"));
 
         self.modalMessage = ko.observable();
         self.modalConfirm = ko.observable();
@@ -102,16 +102,20 @@ require(['text', 'jquery', 'knockout', 'bootstrap', 'js/contracts/apis', 'js/con
 
         self.handleServerError = function (data) {
             switch (data.status) {
+                case 400:
+                    self.showModalMessage(new self.contracts.modalMessage("Bad request", data.responseJSON.title));
+                    break;
                 case 401:
                     self.user("");
                     break;
                 case 403:
-                    self.showModalMessage("Security", "The access to the required resource is forbidden");
+                    self.showModalMessage(new self.contracts.modalMessage("Security", "The access to the required resource is forbidden"));
                     break;
                 case 409:
-                    self.showModalMessage("Server", "A duplicate resource already exists");
+                    self.showModalMessage(new self.contracts.modalMessage("Conflict", "A duplicate resource already exists"));
                     break;
                 default:
+                    self.showModalMessage(new self.contracts.modalMessage("Server", data.responseText));
                     break;
             }
         }

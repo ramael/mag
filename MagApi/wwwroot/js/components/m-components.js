@@ -23,18 +23,18 @@
         self.removeComponent = function (d) {
             self.root.showModalConfirm(new self.root.contracts.modalConfirm("Component", "Confirm delete?", d.id, self.removeComponentConfirm));
         };
-        self.removeComponentConfirm = function (d) {
-            self.deleteComponent(d);
+        self.removeComponentConfirm = function (id) {
+            self.deleteComponent(id);
             location.hash = "components";
         }
 
         // Ajax
         self.getComponents = function () {
             self.root.apis.getComponents(self.root.user().token)
-                .done(function (data) {
-                    if (data && data.length > 0) {
-                        data.forEach(function (c) {
-                            self.components.push(new self.root.contracts.component(c.id, c.code, c.description, c.notes));
+                .done(function (clist) {
+                    if (clist && clist.length > 0) {
+                        clist.forEach(function (c) {
+                            self.components.push(c);
                         });
                     }
                 }).fail(function (data) {
