@@ -33,6 +33,7 @@ namespace MagApi.Controllers
             return await _context.LoadedCarts
                                 .Include(lc => lc.Cart)
                                 .Include(lc => lc.Location)
+                                .ThenInclude(l => l.Area)
                                 .Select(lc => new LoadedCart()
                                     {
                                         Id = lc.Id,
@@ -46,6 +47,13 @@ namespace MagApi.Controllers
                                             Id = lc.Cart.Id,
                                             SerialNumber = lc.Cart.SerialNumber,
                                             Status = (Cart.StatusEnum)(int)lc.Cart.Status
+                                        },
+                                        AreaId = lc.Location.AreaId,
+                                        Area = new Area() {
+                                            Id = lc.Location.Area.Id,
+                                            Name = lc.Location.Area.Name,
+                                            Description = lc.Location.Area.Description,
+                                            Notes = lc.Location.Area.Notes
                                         },
                                         LocationId = lc.LocationId,
                                         Location = new Location() { 
@@ -65,16 +73,25 @@ namespace MagApi.Controllers
         [Authorize]
         public async Task<ActionResult<LoadedCart>> GetLoadedCart(long id, [FromQuery(Name = "includedetails")] bool includeDetails)
         {
-            var partialQuery = _context.LoadedCarts.Include(lc => lc.Cart)
-                                                    .Include(lc => lc.Location);
+            LoadedCartModel loadedCart = null;
             if (includeDetails)
             {
-                partialQuery.Include(lc => lc.LoadedCartDetails)
-                            .ThenInclude(lcd => lcd.Component);
+                loadedCart = await _context.LoadedCarts.Include(lc => lc.Cart)
+                                                    .Include(lc => lc.Location)
+                                                    .ThenInclude(l => l.Area)
+                                                    .Include(lc => lc.LoadedCartDetails)
+                                                    .ThenInclude(lcd => lcd.Component)
+                                                    .Where(lc => lc.Id == id)
+                                                    .FirstOrDefaultAsync();
             }
-
-            var loadedCart = await partialQuery.Where(lc => lc.Id == id)
-                                                .FirstOrDefaultAsync();
+            else 
+            {
+                loadedCart = await _context.LoadedCarts.Include(lc => lc.Cart)
+                                                        .Include(lc => lc.Location)
+                                                        .ThenInclude(l => l.Area)
+                                                        .Where(lc => lc.Id == id)
+                                                        .FirstOrDefaultAsync();
+            }
             if (loadedCart == null)
             {
                 return NotFound();
@@ -92,6 +109,13 @@ namespace MagApi.Controllers
                     Id = loadedCart.Cart.Id,
                     SerialNumber = loadedCart.Cart.SerialNumber,
                     Status = (Cart.StatusEnum)(int)loadedCart.Cart.Status
+                },
+                AreaId = loadedCart.Location.AreaId,
+                Area = new Area() {
+                    Id = loadedCart.Location.Area.Id,
+                    Name = loadedCart.Location.Area.Name,
+                    Description = loadedCart.Location.Area.Description,
+                    Notes = loadedCart.Location.Area.Notes
                 },
                 LocationId = loadedCart.LocationId,
                 Location = new Location() {
@@ -120,7 +144,7 @@ namespace MagApi.Controllers
                                                                     })
                                                                     .ToList();
             }
-            return dto;
+            return Ok(dto);
         }
 
         // PUT: api/LoadedCarts/5
@@ -129,18 +153,36 @@ namespace MagApi.Controllers
         public async Task<IActionResult> PutLoadedCart(long id, LoadedCart dto)
         {
             // We will modify only Description and Location
-            var loadedCart = await _context.LoadedCarts.FindAsync(id);
+            var loadedCart = await _context.LoadedCarts.Include(lc => lc.LoadedCartDetails)
+                                                        .Where(lc => lc.Id == id)
+                                                        .FirstOrDefaultAsync();
             if (loadedCart == null)
             {
                 return NotFound();
             }
 
+            var user = HttpContext.User.Identity.Name;
+            var now = DateTime.Now;
             if (dto.LocationId != 0 && dto.LocationId != loadedCart.LocationId)
                 loadedCart.LocationId = dto.LocationId;
             if (dto.Description != loadedCart.Description)
                 loadedCart.Description = dto.Description;
-            loadedCart.ModifiedBy = HttpContext.User.Identity.Name;
-            loadedCart.ModifiedOn = DateTime.Now;
+            loadedCart.ModifiedBy = user;
+            loadedCart.ModifiedOn = now;
+
+            if (dto.LoadedCartDetails != null && dto.LoadedCartDetails.Count > 0)
+            {
+                loadedCart.LoadedCartDetails = dto.LoadedCartDetails.Select(lcdDto => new LoadedCartDetailModel()
+                                                                    {
+                                                                        ComponentId = lcdDto.ComponentId,
+                                                                        LoadedCartId = lcdDto.LoadedCartId,
+                                                                        Notes = lcdDto.Notes,
+                                                                        CreatedBy = user,
+                                                                        ModifiedBy = user,
+                                                                        ModifiedOn = now
+                                                                    })
+                                                                    .ToList();
+            }
 
             try
             {
@@ -175,10 +217,13 @@ namespace MagApi.Controllers
                 return NotFound();
             }
 
-            loadedCart.DateOut = DateTime.Now;
+            var now = DateTime.Now;
+            loadedCart.DateOut = now;
             loadedCart.Cart.Status = CartModel.StatusEnum.Available;
+            loadedCart.Cart.ModifiedBy = HttpContext.User.Identity.Name;
+            loadedCart.Cart.ModifiedOn = now;
             loadedCart.ModifiedBy = HttpContext.User.Identity.Name;
-            loadedCart.ModifiedOn = DateTime.Now;
+            loadedCart.ModifiedOn = now;
 
             try
             {
@@ -225,8 +270,10 @@ namespace MagApi.Controllers
             var user = HttpContext.User.Identity.Name;
             var loadedCart = new LoadedCartModel()
             {
-                DateIn = dto.DateIn,
+                Year = dto.Year,
+                Progressive = dto.Progressive,
                 Description = dto.Description,
+                DateIn = dto.DateIn,
                 CartId = cart.Id,
                 LocationId = location.Id
             };

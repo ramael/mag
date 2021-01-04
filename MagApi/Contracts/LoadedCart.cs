@@ -13,6 +13,9 @@ namespace MagApi.Contracts
         [JsonProperty("id")]
         public long Id { get; set; }
 
+        [JsonProperty("areaid")]
+        public long AreaId { get; set; }
+
         [JsonProperty("locationid")]
         public long LocationId { get; set; }
 
@@ -25,11 +28,14 @@ namespace MagApi.Contracts
         [JsonProperty("progressive")]
         public string Progressive { get; set; }
 
-        [JsonProperty("location")]
-        public Location Location { get; set; }
-
         [JsonProperty("description")]
         public string Description { get; set; }
+
+        [JsonProperty("area")]
+        public Area Area { get; set; }
+
+        [JsonProperty("location")]
+        public Location Location { get; set; }
 
         [JsonProperty("cart")]
         public Cart Cart { get; set; }
