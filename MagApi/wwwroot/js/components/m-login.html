@@ -52,16 +52,17 @@
             <h1>Welcome</h1>
         </div>
 
-        <div class="form-group">
-            <label for="login">Login</label>
-            <input type="text" id="login" class="form-control" name="login" data-bind="value: username">
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" class="form-control" name="login" data-bind="value: password">
-        </div>
-        <input type="submit" class="btn btn-primary" value="Log In" data-bind="click: login" />
-
+        <form action="#" data-bind="submit: login">
+            <div class="form-group">
+                <label for="username">Login</label>
+                <input type="text" id="username" class="form-control" name="username" data-bind="value: username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" name="password" autocomplete="off" data-bind="value: password">
+            </div>
+            <input type="submit" class="btn btn-primary" value="Log In"  />
+        </form>
         <div class="m-login-footer" data-bind="visible: error">
             <span class="error" data-bind=" text: errorMessage"></span>
         </div>
