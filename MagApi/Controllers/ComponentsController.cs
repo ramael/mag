@@ -9,6 +9,8 @@ using MagApi.Models;
 using MagApi.Contracts;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
+using MagApi.Exceptions;
 
 namespace MagApi.Controllers
 {
@@ -116,14 +118,26 @@ namespace MagApi.Controllers
             component.ModifiedBy = HttpContext.User.Identity.Name;
 
             _context.Components.Add(component);
-            await _context.SaveChangesAsync();
+
+            try 
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var inner = (SqlException)ex.InnerException;
+                if (inner.IsUniqueKeyViolation()) {
+                    return Conflict("Duplicate id or code");
+                }
+                throw;
+            }
 
             //The CreatedAtAction method:
             //- Returns an HTTP 201 status code if successful.HTTP 201 is the standard response for an HTTP POST method that creates a new resource on the server.
             //- Adds a Location header to the response.The Location header specifies the URI of the newly created component item.
             //- References the GetTodoItem action to create the Location header's URI. The C# nameof keyword is used to avoid hard-coding the action name in the CreatedAtAction call.
             //return CreatedAtAction("GetComponent", new { id = component.Id }, component);
-            return CreatedAtAction(nameof(GetComponent), new { id = component.Id }, component);
+            return CreatedAtAction(nameof(GetComponent), new { id = component.Id }, dto);
         }
 
         // DELETE: api/Components/5

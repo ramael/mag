@@ -8,6 +8,13 @@ namespace MagApi.Contracts
 {
     public class LoadedCartDetail
     {
+        public enum StatusEnum { 
+            Original = 0,
+            New = 1,
+            Modified = 2,
+            Deleted = 3
+        }
+
         public LoadedCartDetail() { }
 
         [JsonProperty("id")]
@@ -25,5 +32,7 @@ namespace MagApi.Contracts
         [JsonProperty("notes")]
         public string Notes { get; set; }
 
+        [JsonProperty("status")]
+        public StatusEnum Status { get; set; }
     }
 }

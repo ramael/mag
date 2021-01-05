@@ -9,6 +9,8 @@ using MagApi.Models;
 using Microsoft.Extensions.Logging;
 using MagApi.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
+using MagApi.Exceptions;
 
 namespace MagApi.Controllers
 {
@@ -128,7 +130,7 @@ namespace MagApi.Controllers
 
         //    return Ok(response);
         //}
-        public async Task<ActionResult<IEnumerable<Stock>>> GetWarehouseCurrentStock(long id)
+        public ActionResult<IEnumerable<Stock>> GetWarehouseCurrentStock(long id)
         {
             var details = _context.LoadedCartDetails.Include("LoadedCart")
                                                     .Include("LoadedCart.Cart")
@@ -166,7 +168,7 @@ namespace MagApi.Controllers
             //dell'aggregazione sia i dettagli delle righe
             //es: var detailsresponse=details.ToList()-> materializzazione con plan caching -> var headers=details.Group
 
-            var groups = details.AsEnumerable()
+            var groups = details.AsEnumerable()  
                                 .GroupBy(r => new StockKey() {
                                             Code = r.Code,
                                             Description = r.Description
@@ -313,14 +315,27 @@ namespace MagApi.Controllers
             warehouse.ModifiedBy = HttpContext.User.Identity.Name;
 
             _context.Warehouses.Add(warehouse);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var inner = (SqlException)ex.InnerException;
+                if (inner.IsUniqueKeyViolation())
+                {
+                    return Conflict("Duplicate id or name");
+                }
+                throw;
+            }
 
             //The CreatedAtAction method:
             //- Returns an HTTP 201 status code if successful.HTTP 201 is the standard response for an HTTP POST method that creates a new resource on the server.
             //- Adds a Location header to the response.The Location header specifies the URI of the newly created component item.
             //- References the GetTodoItem action to create the Location header's URI. The C# nameof keyword is used to avoid hard-coding the action name in the CreatedAtAction call.
             //return CreatedAtAction("GetWarehouse", new { id = warehouse.Id }, warehouse);
-            return CreatedAtAction(nameof(GetWarehouse), new { id = warehouse.Id }, warehouse);
+            return CreatedAtAction(nameof(GetWarehouse), new { id = warehouse.Id }, dto);
         }
 
         // DELETE: api/Warehouses/5
@@ -362,13 +377,26 @@ namespace MagApi.Controllers
             area.ModifiedBy = HttpContext.User.Identity.Name;
 
             _context.Areas.Add(area);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var inner = (SqlException)ex.InnerException;
+                if (inner.IsUniqueKeyViolation())
+                {
+                    return Conflict("Duplicate id or name");
+                }
+                throw;
+            }
 
             //The CreatedAtAction method:
             //- Returns an HTTP 201 status code if successful.HTTP 201 is the standard response for an HTTP POST method that creates a new resource on the server.
             //- Adds a Location header to the response.The Location header specifies the URI of the newly created component item.
             //- References the GetTodoItem action to create the Location header's URI. The C# nameof keyword is used to avoid hard-coding the action name in the CreatedAtAction call.
-            return CreatedAtAction(nameof(AreasController.GetArea), new { id = area.Id }, area);
+            return CreatedAtAction(nameof(AreasController.GetArea), new { id = area.Id }, dto);
         }
 
         private bool WarehouseExists(long id)

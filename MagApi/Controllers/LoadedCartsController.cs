@@ -9,6 +9,8 @@ using MagApi.Models;
 using Microsoft.Extensions.Logging;
 using MagApi.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
+using MagApi.Exceptions;
 
 namespace MagApi.Controllers
 {
@@ -153,9 +155,7 @@ namespace MagApi.Controllers
         public async Task<IActionResult> PutLoadedCart(long id, LoadedCart dto)
         {
             // We will modify only Description and Location
-            var loadedCart = await _context.LoadedCarts.Include(lc => lc.LoadedCartDetails)
-                                                        .Where(lc => lc.Id == id)
-                                                        .FirstOrDefaultAsync();
+            var loadedCart = await _context.LoadedCarts.FindAsync(id);;
             if (loadedCart == null)
             {
                 return NotFound();
@@ -172,16 +172,44 @@ namespace MagApi.Controllers
 
             if (dto.LoadedCartDetails != null && dto.LoadedCartDetails.Count > 0)
             {
-                loadedCart.LoadedCartDetails = dto.LoadedCartDetails.Select(lcdDto => new LoadedCartDetailModel()
-                                                                    {
-                                                                        ComponentId = lcdDto.ComponentId,
-                                                                        LoadedCartId = lcdDto.LoadedCartId,
-                                                                        Notes = lcdDto.Notes,
-                                                                        CreatedBy = user,
-                                                                        ModifiedBy = user,
-                                                                        ModifiedOn = now
-                                                                    })
-                                                                    .ToList();
+                var newItems = dto.LoadedCartDetails.Where(lcd => lcd.Status == LoadedCartDetail.StatusEnum.New)
+                                                    .Select(lcd => new LoadedCartDetailModel() 
+                                                    { 
+                                                        Id = 0,
+                                                        ComponentId = lcd.ComponentId,
+                                                        LoadedCartId = lcd.LoadedCartId,
+                                                        Notes = lcd.Notes,
+                                                        CreatedBy = user,
+                                                        ModifiedBy = user
+                                                    })
+                                                    .ToList();
+                var modItems = dto.LoadedCartDetails.Where(lcd => lcd.Status == LoadedCartDetail.StatusEnum.Modified)
+                                                    .ToList();
+                var delItems = dto.LoadedCartDetails.Where(lcd => lcd.Status == LoadedCartDetail.StatusEnum.Deleted)
+                                                    .Select(lcd => new LoadedCartDetailModel()
+                                                    {
+                                                        Id = lcd.Id,
+                                                        ComponentId = lcd.ComponentId,
+                                                        LoadedCartId = lcd.LoadedCartId
+                                                    })
+                                                    .ToList();
+                if (newItems.Count > 0)
+                    _context.LoadedCartDetails.AddRange(newItems);
+
+                if (modItems.Count > 0) {
+                    foreach (LoadedCartDetail lcd in modItems) {
+                        var lcdModel = await _context.LoadedCartDetails.FindAsync(lcd.Id);
+                        if (lcdModel != null) {
+                            lcdModel.Notes = lcd.Notes;
+                            lcdModel.ModifiedBy = user;
+                            lcdModel.ModifiedOn = now;
+                        }
+                    }
+                }
+                
+                if (delItems.Count > 0)
+                    _context.LoadedCartDetails.RemoveRange(delItems);
+
             }
 
             try
@@ -294,14 +322,27 @@ namespace MagApi.Controllers
             }
 
             _context.LoadedCarts.Add(loadedCart);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var inner = (SqlException)ex.InnerException;
+                if (inner.IsUniqueKeyViolation())
+                {
+                    return Conflict("Duplicate id or year/progressive");
+                }
+                throw;
+            }
 
             //The CreatedAtAction method:
             //- Returns an HTTP 201 status code if successful.HTTP 201 is the standard response for an HTTP POST method that creates a new resource on the server.
             //- Adds a Location header to the response.The Location header specifies the URI of the newly created component item.
             //- References the GetTodoItem action to create the Location header's URI. The C# nameof keyword is used to avoid hard-coding the action name in the CreatedAtAction call.
             //return CreatedAtAction("GetLoadedCart", new { id = loadedCart.Id }, loadedCart);
-            return CreatedAtAction(nameof(GetLoadedCart), new { id = loadedCart.Id, includeDetails = false }, loadedCart);
+            return CreatedAtAction(nameof(GetLoadedCart), new { id = loadedCart.Id, includeDetails = false }, dto);
             
         }
 
@@ -419,14 +460,26 @@ namespace MagApi.Controllers
             
             _context.LoadedCartDetails.Add(lcd);
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var inner = (SqlException)ex.InnerException;
+                if (inner.IsUniqueKeyViolation())
+                {
+                    return Conflict("Duplicate id");
+                }
+                throw;
+            }
 
             //The CreatedAtAction method:
             //- Returns an HTTP 201 status code if successful.HTTP 201 is the standard response for an HTTP POST method that creates a new resource on the server.
             //- Adds a Location header to the response.The Location header specifies the URI of the newly created component item.
             //- References the GetTodoItem action to create the Location header's URI. The C# nameof keyword is used to avoid hard-coding the action name in the CreatedAtAction call.
             //return CreatedAtAction("GetLoadedCart", new { id = loadedCart.Id }, loadedCart);
-            return CreatedAtAction(nameof(GetLoadedCartDetail), new { id = id, detailid = lcd.Id }, lcd);
+            return CreatedAtAction(nameof(GetLoadedCartDetail), new { id = id, detailid = lcd.Id }, dto);
 
         }
 

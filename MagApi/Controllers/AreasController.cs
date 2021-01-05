@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Data.SqlClient;
+using MagApi.Exceptions;
 
 namespace MagApi.Models
 {
@@ -183,13 +185,26 @@ namespace MagApi.Models
             location.ModifiedBy = HttpContext.User.Identity.Name;
 
             _context.Locations.Add(location);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var inner = (SqlException)ex.InnerException;
+                if (inner.IsUniqueKeyViolation())
+                {
+                    return Conflict("Duplicate id or name");
+                }
+                throw;
+            }
 
             //The CreatedAtAction method:
             //- Returns an HTTP 201 status code if successful.HTTP 201 is the standard response for an HTTP POST method that creates a new resource on the server.
             //- Adds a Location header to the response.The Location header specifies the URI of the newly created component item.
             //- References the GetTodoItem action to create the Location header's URI. The C# nameof keyword is used to avoid hard-coding the action name in the CreatedAtAction call.
-            return CreatedAtAction(nameof(LocationsController.GetLocation), new { id = location.Id }, location);
+            return CreatedAtAction(nameof(LocationsController.GetLocation), new { id = location.Id }, dto);
         }
 
         private bool AreaExists(long id)
