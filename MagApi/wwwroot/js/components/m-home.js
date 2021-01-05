@@ -8,6 +8,8 @@
         // Events
         self.logout = function () {
             self.root.user("");
+            self.selectedPage("");
+            self.sammy.destroy();
         };
 
         self.selectPage = function (page) {
@@ -15,7 +17,7 @@
         };
 
         // Client side routes
-        sammy(function () {
+        self.sammy = sammy(function () {
             this.get('#:page', function () {
                 const pageid = this.params['page'];
                 const page = self.root.pages.find(function (p) { return p.id === pageid });
@@ -39,10 +41,11 @@
 
             // Default route
             this.get('', function () {
-                this.app.runRoute('get', '#loadedcarts');
+                this.app.runRoute('get', '#components');
             });
 
-        }).run();
+        });
+        self.sammy.run();
 
     }
 
