@@ -79,60 +79,9 @@ namespace MagApi.Controllers
         // GET: api/Warehouses/5/CurrentStock
         [HttpGet("{id}/currentstock")]
         [Authorize]
-        //public async Task<ActionResult<Warehouse>> GetWarehouseCurrentStock(long id)
-        //{
-        //    var details = _context.Components.Include("LoadedCartDetails")
-        //                                    .Include("LoadedCartDetails.LoadedCart")
-        //                                    .Include("LoadedCartDetails.LoadedCart.Cart")
-        //                                    .Include("LoadedCartDetails.LoadedCart.Location")
-        //                                    .Include("LoadedCartDetails.LoadedCart.Location.Area")
-        //                                    .SelectMany(c => c.LoadedCartDetails)
-        //                                    .Where(lcd => lcd.LoadedCart.Location.Area.WarehouseId == id)
-        //                                    .OrderBy(lcd => lcd.Component.Code)
-        //                                    .ThenBy(lcd => lcd.LoadedCart.Cart.SerialNumber)
-        //                                    .ThenBy(lcd => lcd.LoadedCart.Location.Area.Name)
-        //                                    .ThenBy(lcd => lcd.LoadedCart.Location.Name)
-        //                                    .Select(lcd => new
-        //                                    {
-        //                                        Code = lcd.Component.Code,
-        //                                        Description = lcd.Component.Description,
-        //                                        SerialNumber = lcd.LoadedCart.Cart.SerialNumber,
-        //                                        AreaName = lcd.LoadedCart.Location.Area.Name,
-        //                                        LocationName = lcd.LoadedCart.Location.Name
-        //                                    }
-        //                                            );
-
-        //    var groups = details.AsEnumerable().GroupBy(r => new StockKey()
-        //    {
-        //        Code = r.Code,
-        //        Description = r.Description
-        //    },
-        //                                r => new StockDetail()
-        //                                {
-        //                                    SerialNumber = r.SerialNumber,
-        //                                    AreaName = r.AreaName,
-        //                                    LocationName = r.LocationName
-        //                                },
-        //                                new StockKeyComparer());
-
-        //    var response = groups.Select(g => new Stock()
-        //    {
-        //        ComponentCode = g.Key.Code,
-        //        ComponentDescription = g.Key.Description,
-        //        Details = g.Select(d => new StockDetail()
-        //        {
-        //            SerialNumber = d.SerialNumber,
-        //            AreaName = d.AreaName,
-        //            LocationName = d.LocationName
-        //        })
-        //    })
-        //                        .ToList();
-
-        //    return Ok(response);
-        //}
         public ActionResult<IEnumerable<Stock>> GetWarehouseCurrentStock(long id)
         {
-            var details = _context.LoadedCartDetails.Include("LoadedCart")
+             var details = _context.LoadedCartDetails.Include("LoadedCart")
                                                     .Include("LoadedCart.Cart")
                                                     .Include("LoadedCart.Location")
                                                     .Include("LoadedCart.Location.Area")
