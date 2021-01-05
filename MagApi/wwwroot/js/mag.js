@@ -54,7 +54,6 @@ require(['text', 'jquery', 'knockout', 'bootstrap', 'js/contracts/apis', 'js/con
                                                             self.modalMessage("");
                                                             self.modalMessageDialog.modal("dispose");
                                                             self.modalMessageDialog = null;
-                                                            console.log("hide modalMessage", e);
                                                         });
         };
 
@@ -70,7 +69,6 @@ require(['text', 'jquery', 'knockout', 'bootstrap', 'js/contracts/apis', 'js/con
                                                             self.modalConfirm("");
                                                             self.modalConfirmDialog.modal("dispose");
                                                             self.modalConfirmDialog = null;
-                                                            console.log("hide modalConfirm", e);
                                                         });
         };
         self.confirmModalConfirm = function () {
@@ -96,7 +94,6 @@ require(['text', 'jquery', 'knockout', 'bootstrap', 'js/contracts/apis', 'js/con
                                                                 self.modalComponentStatus("");
                                                                 self.modalComponentDialog.modal("dispose");
                                                                 self.modalComponentDialog = null;
-                                                                console.log("hide modalComponent", e);
                                                             });
         };
 

@@ -17,14 +17,12 @@
 
         // Events
         self.addLoadedCart= function (e) {
-            console.log("addLoadedCart", e);
             if (self.selectedWarehouse()) {
                 location.hash = "loadedcart/" + self.selectedWarehouse() + "/-1";
             }
         };
 
         self.editLoadedCart= function (d) {
-            console.log("editLoadedCart", d);
             if (self.selectedWarehouse() && d.id) {
                 location.hash = "loadedcart/" + self.selectedWarehouse() + "/" + d.id;
             }
@@ -34,7 +32,6 @@
             self.root.showModalConfirm(new self.root.contracts.modalConfirm("Loaded cart", "Confirm delete?", d.id, self.removeLoadedCartConfirm));
         };
         self.removeLoadedCartConfirm = function (d) {
-            console.log("removeLoadedCartConfirm", d);
             self.deleteLoadedCart(d);
         }
 
