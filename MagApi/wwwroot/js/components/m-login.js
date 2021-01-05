@@ -11,7 +11,7 @@
         // Events
         self.login = function () {
             const lr = new self.root.contracts.loginrequest(this.username, this.password);
-            self.root.apis.login(lr)
+            self.root.apis.doLogin(lr)
                 .done(function (user) {
                     self.root.user(user)
                     self.error(false);

@@ -12,7 +12,7 @@
     this.warehouseLoadedCarts = 'api/public/v1/warehouses/{id}/loadedcarts';
     this.areaLocations = 'api/public/v1/areas/{id}/locations';
 
-    this.login = function (login) {
+    this.doLogin = function (login) {
         return $.ajax({
             url: this.login,
             dataType: 'json',
@@ -280,7 +280,7 @@
     }.bind(this);
 
     return {
-        login: this.login,
+        doLogin: this.doLogin,
         getWarehouses: this.getWarehouses,
         getWarehouseAreas: this.getWarehouseAreas,
         getWarehouseCurrentStock: this.getWarehouseCurrentStock,
