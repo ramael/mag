@@ -18,7 +18,7 @@ require(['text', 'jquery', 'knockout', 'bootstrap', 'js/contracts/apis', 'js/con
         self.pages = pages;
         self.user = ko.observable();
         //debug
-        self.user(new contracts.loginresponse("t1", "Test1", "T1LN", ["WarehouseManager"], "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InQyIiwicm9sZSI6IkNhcnRNYW5hZ2VyIiwibmJmIjoxNjA5NzgzMDgwLCJleHAiOjE2MDk3ODQ4ODAsImlhdCI6MTYwOTc4MzA4MCwiaXNzIjoiaHR0cDovL21hZy5vcmciLCJhdWQiOiJodHRwOi8vbWFnLm9yZyJ9.Tl_giNSDeFi5CDGnDZx8eake9db_X9R1-g9pfXluEv4"));
+        self.user(new contracts.loginresponse("t1", "Test1", "T1LN", ["WarehouseManager"], "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InQyIiwicm9sZSI6IkNhcnRNYW5hZ2VyIiwibmJmIjoxNjA5ODQ0NDg0LCJleHAiOjE2MDk4NDYyODQsImlhdCI6MTYwOTg0NDQ4NCwiaXNzIjoiaHR0cDovL21hZy5vcmciLCJhdWQiOiJodHRwOi8vbWFnLm9yZyJ9.QKmttO_JbmO5PZvx-s_vS_3za2Uhkh_uWpip6RCLRl0"));
 
         self.modalMessage = ko.observable();
         self.modalConfirm = ko.observable();
@@ -112,7 +112,8 @@ require(['text', 'jquery', 'knockout', 'bootstrap', 'js/contracts/apis', 'js/con
                     self.showModalMessage(new self.contracts.modalMessage("Security", "The access to the required resource is forbidden"));
                     break;
                 case 409:
-                    self.showModalMessage(new self.contracts.modalMessage("Conflict", "A duplicate resource already exists"));
+                    const msg = (data.responseText ? data.responseText : "A duplicate resource already exists");
+                    self.showModalMessage(new self.contracts.modalMessage("Conflict", msg));
                     break;
                 default:
                     self.showModalMessage(new self.contracts.modalMessage("Server", data.responseText));

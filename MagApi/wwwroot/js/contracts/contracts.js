@@ -68,12 +68,29 @@
         this.loadedcartdetails = loadedcartdetails;
     }
 
-    function LoadedCartDetail(id, loadedcartid, componentid, component, notes) {
+    function LoadedCartDetail(id, loadedcartid, componentid, component, notes, status) {
         this.id = id;
         this.loadedcartid = loadedcartid;
         this.componentid = componentid;
         this.component = component;
         this.notes = notes;
+        this.status = status;
+
+        this.getStatusLabel = function () {
+            switch (this.status) {
+                case 0:
+                    return "Original";
+                case 1:
+                    return "New";
+                case 2:
+                    return "Modified";
+                case 3:
+                    return "Deleted";
+                default:
+                    return "Unknown";
+            }
+        }
+
     }
 
     function LoginRequest(username, password) {

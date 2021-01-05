@@ -6,6 +6,7 @@
         self.data = params.data;
         self.modal = params.modal;
 
+        self.component = ko.observable();
         self.components = ko.observableArray();
         self.notes = ko.observable();
 
@@ -30,9 +31,11 @@
                 return;
             }
             if (self.modal) {
-                self.data.notes = self.notes();
-                self.data.componentid = self.selectedComponent();
-                self.data.component = self.components().find(c => c.id === self.data.componentid);
+                self.data.notes = self.notes();                
+                if (!self.isEdit()) {
+                    self.data.componentid = self.selectedComponent();
+                    self.data.component = self.components().find(c => c.id === self.data.componentid);
+                }
                 self.root.modalComponentStatus(self.data);
             }
         };
@@ -50,8 +53,7 @@
                     if (clist && clist.length > 0) {
                         clist.forEach(function (c) {
                             self.components.push(c);
-                        });
-                        self.selectedComponent(self.data.componentid);                        
+                        });                                              
                     }
                 }).fail(function (data) {
                     console.error("components error", data);
@@ -61,7 +63,11 @@
         };
 
         // Init
-        self.getComponents();
+        if (self.isEdit()) {
+            self.component(self.data.component.code + " - " + self.data.component.description);
+        } else {
+            self.getComponents();
+        }
 
         self.notes(self.data.notes);
 

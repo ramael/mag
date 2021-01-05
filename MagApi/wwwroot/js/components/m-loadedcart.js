@@ -61,6 +61,8 @@
             self.root.showModalComponent(new self.root.contracts.modalComponent("Add component", "m-loadedcartdetail", d, self.addComponentConfirm));
         };
         self.addComponentConfirm = function (d) {
+            d.status = 1;   // New
+            self.loadedCart().loadedcartdetails.push(d);
             self.loadedCartDetails.push(d);
         }
 
@@ -68,6 +70,12 @@
             self.root.showModalComponent(new self.root.contracts.modalComponent("Edit component", "m-loadedcartdetail", d, self.editComponentConfirm));
         };
         self.editComponentConfirm = function (d) {
+            for (let i = 0; i < self.loadedCart().loadedcartdetails.length; i++) {
+                const lcd = self.loadedCart().loadedcartdetails[i]
+                if (lcd.id === d.id && lcd.loadedcartid === d.loadedcartid && lcd.componentid === d.componentid) {
+                    lcd.status = 2  // Modified
+                }
+            }
             self.loadedCartDetails.remove(function (lcd) {
                 return lcd.id === d.id && lcd.loadedcartid === d.loadedcartid && lcd.componentid === d.componentid;
             });
@@ -78,13 +86,19 @@
             self.root.showModalConfirm(new self.root.contracts.modalConfirm("Component", "Confirm delete?", d, self.removeComponentConfirm));
         };
         self.removeComponentConfirm = function (d) {
+            for (let i = 0; i < self.loadedCart().loadedcartdetails.length; i++) {
+                const lcd = self.loadedCart().loadedcartdetails[i]
+                if (lcd.id === d.id && lcd.loadedcartid === d.loadedcartid && lcd.componentid === d.componentid) {
+                    lcd.status = 3  // Deleted
+                }
+            }
             self.loadedCartDetails.remove(function (lcd) {
                 return lcd.id === d.id && lcd.loadedcartid === d.loadedcartid && lcd.componentid === d.componentid;
             });
         }
 
         self.doSubmit = function () {
-            self.loadedCart().loadedcartdetails = self.loadedCartDetails();
+            self.loadedCart().loadedcartdetails = self.loadedCart().loadedcartdetails.filter(lcd => lcd.status !== 0);
             if (self.isEdit()) {
                 self.updateLoadedCart();
             } else {

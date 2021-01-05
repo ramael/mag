@@ -231,7 +231,7 @@
                         if (lcd.component) {
                             mc = new contracts.component(lcd.component.id, lcd.component.code, lcd.component.description, lcd.component.notes);
                         }
-                        return new contracts.loadedcartdetail(lcd.id, lcd.loadedcartid, lcd.componentid, mc, lcd.notes);
+                        return new contracts.loadedcartdetail(lcd.id, lcd.loadedcartid, lcd.componentid, mc, lcd.notes, 0);
                     });
                 }
                 return new contracts.loadedcart(lc.id, lc.year, lc.progressive, lc.description, lc.areaid, lc.area, lc.locationid, lc.location, lc.cartid, lc.cart, lc.datein, null, lcDetails);
